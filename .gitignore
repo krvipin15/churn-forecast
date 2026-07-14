@@ -1,0 +1,126 @@
+# Python runtime
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.uv/
+env.bak/
+venv.bak/
+
+# Python packaging and build output
+build/
+dist/
+sdist/
+wheels/
+*.egg-info/
+*.egg
+*.whl
+MANIFEST
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Environment variables, credentials, and private keys
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+*.pem
+*.key
+*.p12
+*.pfx
+service-account*.json
+credentials*.json
+.vault-token
+secrets.yaml
+secrets.yml
+secrets.json
+docker-compose.override.yml
+
+# Local data and generated reports
+data/raw/*
+data/interim/*
+data/processed/*
+data/external/*
+reports/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+!data/processed/.gitkeep
+!data/external/.gitkeep
+!reports/.gitkeep
+
+# Data version control (DVC) local state
+.dvc/cache/
+.dvc/tmp/
+.dvc/config.local
+
+# Model, experiment, and notebook artifacts
+models/
+mlruns/
+mlartifacts/
+wandb/
+runs/
+lightning_logs/
+.ipynb_checkpoints/
+
+# Serialized models and local datasets
+*.skops
+*.pkl
+*.joblib
+*.onnx
+*.pt
+*.pth
+*.h5
+*.pb
+*.mar
+*.safetensors
+*.csv
+*.parquet
+*.feather
+*.avro
+*.orc
+*.duckdb
+*.db
+*.sqlite
+*.sqlite3
+
+# Archives created during data export or packaging
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.gz
+*.7z
+
+# Test, coverage, lint, and type-checker caches
+.pytest_cache/
+.cache/
+.hypothesis/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+.pyre/
+.pytype/
+.tox/
+.nox/
+.pre-commit-cache/
+
+# Logs and local application state
+*.log
+logs/
+
+# IDEs and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini

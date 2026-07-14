@@ -1,0 +1,24 @@
+[project]
+name = "churn-forecast"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE*"]
+authors = [
+    { name = "Vipin Kumar", email = "krvipin15@tutamail.com" }
+]
+requires-python = ">=3.12,<3.13"
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python :: 3.12",
+  "Operating System :: POSIX :: Linux",
+  "Intended Audience :: Developers",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Typing :: Typed"
+]
+dependencies = []
+
+[project.urls]
+"Source" = "https://github.com/krvipin15/churn-forecast"
+"Bug Reports" = "https://github.com/krvipin15/churn-forecast/issues"
