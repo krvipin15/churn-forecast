@@ -1,0 +1,70 @@
+---
+name: CI Pipeline
+
+# Triggers
+"on":
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:  # Allow manual trigger
+
+# Concurrency guard
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Restrict GITHUB_TOKEN to least privilege
+permissions:
+  contents: read
+
+# Global environment variables
+env:
+  PYTHON_VERSION: "3.12"
+  UV_SYSTEM_PYTHON: 1
+  UV_CACHE_DIR: /tmp/.uv-cache
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+# Jobs
+jobs:
+  # JOB 1 · Pre-Commit Hooks
+  pre-commit:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # 1. Checkout full repo history
+      - name: Checkout code
+        uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 0
+
+      # 2. Install uv (fast dependency manager)
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      # 3. Install Python via uv
+      - name: Set up Python
+        run: uv python install ${{ env.PYTHON_VERSION }}
+
+      # 4. Install dependencies (strict lockfile enforcement)
+      - name: Install dependencies
+        run: uv sync --frozen --all-extras
+
+      # 5. Cache pre-commit environments (huge speed boost)
+      - name: Cache pre-commit
+        uses: actions/cache@v6.1.0
+        with:
+          path: ~/.cache/pre-commit
+          key: pre-commit-${{ hashFiles('.pre-commit-config.yaml') }}
+          restore-keys: pre-commit-
+
+      # 6. Run pre-commit hooks
+      - name: Run pre-commit hooks
+        run: |
+          uv run pre-commit run --all-files \
+            --show-diff-on-failure --color=always

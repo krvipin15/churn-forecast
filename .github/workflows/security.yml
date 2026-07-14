@@ -1,0 +1,99 @@
+---
+name: Security
+
+# Triggers
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main", "develop" ]
+  schedule:
+    - cron: '30 4 * * 1'
+
+# Global environment variables
+env:
+  PYTHON_VERSION: "3.12"
+  UV_SYSTEM_PYTHON: 1
+  UV_CACHE_DIR: /tmp/.uv-cache
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  # Job 1: Analyze first-party code
+  analyze:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      security-events: write
+      packages: read
+      actions: read
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['actions'] # 'python'
+
+    steps:
+    # 1. Checkout the repo history
+    - name: Checkout repository
+      uses: actions/checkout@v7.0.0
+
+    # 2. Initialize CodeQL
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v4.35.5
+      with:
+        languages: ${{ matrix.language }}
+        queries: security-extended,security-and-quality
+
+    # 3. Perform CodeQL Analysis
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v4.35.5
+      with:
+        category: "/language:${{matrix.language}}"
+
+  # Job 2: Analyze third-party dependencies
+  scan:
+    name: Open Source Vulnerability Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      security-events: write
+      contents: read
+
+    steps:
+      # 1. Checkout full repo history
+      - name: Checkout code
+        uses: actions/checkout@v7.0.0
+        with:
+          fetch-depth: 0
+
+      # 2. Install uv
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b
+        with:
+          version: "latest"
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      # 3. Install OSV-Scanner
+      - name: Install osv-scanner
+        run: |
+          curl -fsSL https://github.com/google/osv-scanner/releases/latest/download/osv-scanner_linux_amd64 -o /usr/local/bin/osv-scanner
+          chmod +x /usr/local/bin/osv-scanner
+
+      # 4. Audit dependencies for CVEs
+      - name: Audit dependencies for CVEs
+        continue-on-error: true
+        run: |
+          osv-scanner scan \
+            --lockfile uv.lock \
+            --format sarif \
+            --output-file results.sarif
+
+      # 5. Upload to GitHub Security Tab
+      - name: Upload SARIF results
+        uses: github/codeql-action/upload-sarif@v4.35.5
+        with:
+          sarif_file: results.sarif
+          category: osv-scanner
