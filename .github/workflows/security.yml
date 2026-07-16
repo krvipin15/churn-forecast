@@ -32,7 +32,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        language: ['actions'] # 'python'
+        language: ['actions', 'python']
 
     steps:
     # 1. Checkout the repo history

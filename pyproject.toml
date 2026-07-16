@@ -5,9 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE*"]
-authors = [
-    { name = "Vipin Kumar", email = "krvipin15@tutamail.com" }
-]
+authors = [{ name = "Vipin Kumar", email = "krvipin15@tutamail.com" }]
 requires-python = ">=3.12,<3.13"
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -15,9 +13,15 @@ classifiers = [
   "Operating System :: POSIX :: Linux",
   "Intended Audience :: Developers",
   "Topic :: Scientific/Engineering :: Artificial Intelligence",
-  "Typing :: Typed"
+  "Typing :: Typed",
 ]
-dependencies = []
+dependencies = [
+  "prefect>=3.7.8",
+  "pydantic-settings>=2.14.2",
+  "pydantic[email]>=2.13.4",
+  "sentry-sdk>=2.65.0",
+  "structlog>=26.1.0",
+]
 
 [project.urls]
 "Source" = "https://github.com/krvipin15/churn-forecast"
@@ -25,15 +29,12 @@ dependencies = []
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.6.0",
-    "pytest>=9.1.1",
-    "pytest-cov>=7.1.0",
-    "ruff>=0.15.21",
-    "ty>=0.0.59",
+  "pre-commit>=4.6.0",
+  "pytest>=9.1.1",
+  "pytest-cov>=7.1.0",
+  "ruff>=0.15.21",
+  "ty>=0.0.59",
 ]
-
-[tool.prefect]
-logging.level = "INFO"
 
 [tool.bandit]
 exclude_dirs = [".venv/", "tests/"]
@@ -56,42 +57,43 @@ src = ["src"]
 
 [tool.ruff.lint]
 select = [
-  "A", # flake8-builtins
-  "ARG", # flake8-unused-arguments
-  "B", # flake8-bugbear
-  "BLE", # Blind except
-  "C4", # flake8-comprehensions
-  "D", # docstrings
-  "DTZ", # flake8-datetimez
-  "E", # pycodestyle errors
-  "ERA", # eradicate (commented-out code)
-  "F", # pyflakes
-  "FBT", # Boolean traps
-  "G", # Logging format
-  "I", # isort
-  "N", # pep8-naming
+  "A",    # flake8-builtins
+  "ARG",  # flake8-unused-arguments
+  "B",    # flake8-bugbear
+  "BLE",  # Blind except
+  "C4",   # flake8-comprehensions
+  "D",    # docstrings
+  "DTZ",  # flake8-datetimez
+  "E",    # pycodestyle errors
+  "ERA",  # eradicate (commented-out code)
+  "F",    # pyflakes
+  "FBT",  # Boolean traps
+  "G",    # Logging format
+  "I",    # isort
+  "N",    # pep8-naming
   "PERF", # perflint
-  "PL", # pylint
-  "PTH", # flake8-use-pathlib
-  "RET", # flake8-return
-  "RUF", # Ruff-specific rules
-  "S", # flake8-bandit (basic security)
-  "SIM", # flake8-simplify
-  "T20", # flake8-print
-  "UP", # pyupgrade
-  "W" # pycodestyle warnings
+  "PL",   # pylint
+  "PTH",  # flake8-use-pathlib
+  "RET",  # flake8-return
+  "RUF",  # Ruff-specific rules
+  "S",    # flake8-bandit (basic security)
+  "SIM",  # flake8-simplify
+  "T20",  # flake8-print
+  "UP",   # pyupgrade
+  "W",    # pycodestyle warnings
 ]
 ignore = [
-  "E501", # line too long — handled by formatter
+  "E501",    # line too long — handled by formatter
   "PLR0912", # too many branches — acceptable in pipeline logic
   "PLR0913", # too many arguments — common in ML training functions
-  "S311", # random — not used for crypto
-  "N803", # argument name should be lowercase
-  "N806", # Variable name should be lowercase
-  "N815", # Variable name in class scope should not be mixedCase
+  "S311",    # random — not used for crypto
+  "N803",    # argument name should be lowercase
+  "N806",    # Variable name should be lowercase
+  "N815",    # Variable name in class scope should not be mixedCase
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"src/configs/logger.py" = ["FBT003"]
 "tests/**/*.py" = ["ARG001", "PLR2004", "S101"]
 "notebooks/**/*.ipynb" = ["T201", "BLE001"]
 "scripts/*.py" = ["T20"]
@@ -114,7 +116,7 @@ convention = "numpy"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["."]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
@@ -126,7 +128,7 @@ addopts = [
   "--cov-fail-under=85",
   "--cov-report=term-missing:skip-covered",
   "--cov-report=xml",
-  "-ra"
+  "-ra",
 ]
 markers = [
   "integration: tests requiring external services",
@@ -136,12 +138,7 @@ markers = [
 [tool.coverage.run]
 branch = true
 source = ["src"]
-omit = [
-  "*/__init__.py",
-  "*/conftest.py",
-  "src/configs/*",
-  "tests/*"
-]
+omit = ["*/__init__.py", "*/conftest.py", "tests/*"]
 
 [tool.coverage.report]
 exclude_lines = [
@@ -149,7 +146,7 @@ exclude_lines = [
   "if TYPE_CHECKING:",
   "if __name__ == .__main__.:",
   "pragma: no cover",
-  "raise NotImplementedError"
+  "raise NotImplementedError",
 ]
 fail_under = 85
 show_missing = true
